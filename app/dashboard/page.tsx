@@ -10,7 +10,7 @@ async function page() {
     if(!user || !user.id) redirect('/auth-callback?origin=dashboard')
 
   return (
-    <div>page</div>
+    <div>{user.email}</div>
   )
 }
 
