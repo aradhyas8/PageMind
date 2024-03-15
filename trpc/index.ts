@@ -11,10 +11,11 @@ export const appRouter = router({
       console.log("authCallback called");
 
     const { getUser } = getKindeServerSession();
-    const user = await getUser(); // Assuming getUser is an async function, await its result
+    const user = await getUser();
+    console.log("User session:", user); // Assuming getUser is an async function, await its result
 
-    const uid = user?.id;
-    const eid = user?.email;
+    const uid = user.id;
+    const eid = user.email;
     // Check if the user exists and has the necessary properties
     if (!uid || !eid) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
