@@ -9,12 +9,24 @@ import { Progress } from './ui/progress';
 import { set } from 'date-fns';
 import { useUploadThing } from '@/lib/uploadthing';
 import { useToast } from './ui/use-toast';
+import { trpc } from '@/app/_trpc/client';
+import { useRouter } from 'next/navigation';
 
 const UploadDropZone = () => {
+
+    const router = useRouter()
     const [isUploading, setIsUploading] = React.useState<boolean>(true)
     const [uploadProgress, setUploadProgress] = React.useState<number>(0)
-    const {toast} = useToast()
-    const {startUpload} = useUploadThing("pdfUploader")
+    const { toast } = useToast()
+    const { startUpload } = useUploadThing("pdfUploader")
+
+    const {mutate : startPolling} = trpc.getFile.useMutation({
+        onSuccess: (file) => {
+            router.push(`/dashboard/${file.id}`)
+        },
+        retry: true,
+        retryDelay: 500
+    })
 
     const startSimulatorProgress = () => {
         setUploadProgress(0)
@@ -38,8 +50,8 @@ const UploadDropZone = () => {
 
         //handle file uploading
         const res = await startUpload(acceptedFile)
-        if(!res) {
-            return toast({ 
+        if (!res) {
+            return toast({
                 title: 'Something went wrong',
                 description: 'Please try again later',
                 variant: 'destructive'
@@ -49,7 +61,7 @@ const UploadDropZone = () => {
         const [fileResponse] = res
         const key = fileResponse?.key
 
-        if(!key) {
+        if (!key) {
             return toast({
                 title: 'Something went wrong',
                 description: 'Please try again later',
@@ -57,8 +69,12 @@ const UploadDropZone = () => {
             })
         }
 
+
+
         clearInterval(ProgressInterval)
         setUploadProgress(100)
+
+        startPolling({key})
     }}>
         {({ getRootProps, getInputProps, acceptedFiles }) => (
             <div {...getRootProps()} className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'>
@@ -86,6 +102,11 @@ const UploadDropZone = () => {
                         {isUploading ? (
                             <div className='w-full mt-4 max-w-xs mx-auto'><Progress value={uploadProgress} className='h-1 w-full bg-zinc-200 rounded' /></div>
                         ) : null}
+                        <input 
+                        {...getInputProps()}
+                        type='file' 
+                        id='dropzone-file' 
+                        className='hidden'/>
                     </label>
                 </div>
             </div>

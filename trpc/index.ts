@@ -70,6 +70,8 @@ export const appRouter = router({
     })
 
     if(!file) throw new TRPCError({code : 'NOT_FOUND', message: 'File not found'})
+
+    return file
   }),
 
   deleteFile: privateProcedure.input(z.object({id: z.string()})
