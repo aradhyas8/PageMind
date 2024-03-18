@@ -46,6 +46,17 @@ const UploadDropZone = () => {
             })
         }
 
+        const [fileResponse] = res
+        const key = fileResponse?.key
+
+        if(!key) {
+            return toast({
+                title: 'Something went wrong',
+                description: 'Please try again later',
+                variant: 'destructive'
+            })
+        }
+
         clearInterval(ProgressInterval)
         setUploadProgress(100)
     }}>
