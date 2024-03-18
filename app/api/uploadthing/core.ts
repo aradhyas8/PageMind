@@ -10,7 +10,7 @@ const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  pdfUploader: f({ image: { maxFileSize: "4MB" } })
+  pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       const { getUser } = getKindeServerSession();
@@ -26,7 +26,8 @@ export const ourFileRouter = {
           key: file.key,
           name: file.name,
           userId: metadata.userId,
-          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
+          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+          uploadStatus: 'PROCESSING'
         }
       })
     }),
