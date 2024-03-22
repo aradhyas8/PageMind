@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronDown, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -9,6 +9,7 @@ import { title } from 'process';
 import { useResizeDetector } from 'react-resize-detector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useState } from 'react';
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -20,7 +21,8 @@ interface PdfRendererProps {
 const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   const {toast} = useToast();
-  const [numPages, setNumPages] = useState(null);
+  const [numPages, setNumPages] = useState<number>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const {width, ref} = useResizeDetector();
 
   return (
@@ -35,9 +37,16 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             <Input className='w-12 h-8' />
             <p className='text-zinc-700 text-sm space-x-1'>
               <span>/</span>
-              <span>5</span>
+              <span>{numPages ?? '0'}</span>
             </p>
           </div>
+          <Button 
+          onClick={(previous) => {
+            previous-1 > 1? previous-1
+          }}
+          variant='ghost' aria-label='next page'>
+            <ChevronUp className='h-4 w-4' />
+          </Button>
         </div>
       </div>
       <div className="flex-1 w-full max-h-screen">
@@ -52,8 +61,13 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               description: "An error occurred while loading the PDF. Please try again later.",
               variant: 'destructive'
             })
-          }} file={url} className='max-h-full'>
-            <Page width={width ? width : 1} pageNumber={1} />
+          }}
+          onLoadSuccess={({numPages}) => {
+            setNumPages(numPages);
+          }}
+          file={url}
+          className='max-h-full'>
+            <Page width={width ? width : 1} pageNumber={currentPage} />
           </Document>
         </div>
       </div>
