@@ -29,7 +29,12 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     <div className="w-full bg-white rounded-md flex flex-col items-center">
       <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
         <div className="flex items-center gap-1.5">
-          <Button variant='ghost' aria-label='previous page'>
+          <Button 
+            disabled={currentPage <= 1}
+            onClick={() => {
+              setCurrentPage((prev) => (prev - 1 > 1 ? prev - 1 : 1))
+            }} 
+            variant='ghost' aria-label='previous page'>
             <ChevronDown className='h-4 w-4' />
           </Button>
 
@@ -41,8 +46,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             </p>
           </div>
           <Button 
+          disabled={numPages === undefined || currentPage === numPages}
           onClick={() => {
-            setCurrentPage((prev) => (prev-1 > 1 ? prev-1: 1))
+            setCurrentPage((prev) => prev + 1 > numPages! ? numPages!: prev + 1 )
           }}
           variant='ghost' aria-label='next page'>
             <ChevronUp className='h-4 w-4' />
