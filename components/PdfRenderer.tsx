@@ -41,8 +41,8 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             </p>
           </div>
           <Button 
-          onClick={(previous) => {
-            previous-1 > 1? previous-1
+          onClick={() => {
+            setCurrentPage((prev) => (prev-1 > 1 ? prev-1: 1))
           }}
           variant='ghost' aria-label='next page'>
             <ChevronUp className='h-4 w-4' />
