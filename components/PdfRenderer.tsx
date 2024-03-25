@@ -10,6 +10,9 @@ import { useResizeDetector } from 'react-resize-detector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import {ZodResolver} from '@hookform/resolvers/zod';
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -17,12 +20,22 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 interface PdfRendererProps {
   url: string;
 }
-
-const PdfRenderer = ({ url }: PdfRendererProps) => {
-
+ //abc
   const {toast} = useToast();
   const [numPages, setNumPages] = useState<number>();
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const customPagevalidator = z.object({
+    page: z.string().refine((num) => Number(num) > 0 && Number(num) <= numPages!)
+  })
+
+  type TCustomPageValidator = z.infer<typeof customPagevalidator>
+
+  const {} = useForm<TCustomPageValidator>({
+    defaultValues: {
+      page: "1"
+    }
+  })
   const {width, ref} = useResizeDetector();
 
   return (
