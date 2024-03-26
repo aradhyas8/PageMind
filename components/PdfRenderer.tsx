@@ -20,6 +20,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 interface PdfRendererProps {
   url: string;
 }
+
  //abc
   const {toast} = useToast();
   const [numPages, setNumPages] = useState<number>();
@@ -34,7 +35,8 @@ interface PdfRendererProps {
   const {} = useForm<TCustomPageValidator>({
     defaultValues: {
       page: "1"
-    }
+    },
+    resolver : ZodResolver(customPagevalidator)
   })
   const {width, ref} = useResizeDetector();
 
